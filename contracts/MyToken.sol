@@ -3,13 +3,13 @@ pragma solidity ^0.8.0;
 
 contract MyToken{
 
-    uint public totalSupply = 1000;
+    uint public totalSupply = 10000;
     string public name = 'Ajidokwu';
     string public symbol = 'AJI';
     uint public decimals = 18;
     address public owner;
 
-    mapping(address => uint) balanceOf;
+    mapping(address => uint) public balanceOf;
     mapping(address => mapping(address => uint))public allowance;
  
     event Transfer(address indexed from, address indexed to, uint value);

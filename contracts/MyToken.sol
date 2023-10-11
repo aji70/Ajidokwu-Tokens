@@ -1,77 +1,51 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: UnLicensed
+pragma solidity >=0.5.0 <0.9.0;
 
-contract MyToken{
+contract Token{
+	string public name = "Ajidokwu Token";
+	string public symbol = "AJI";
+	uint256 public totalSupply = 10000;
 
-    uint public totalSupply = 10000;
-    string public name = 'Ajidokwu';
-    string public symbol = 'AJI';
-    uint public decimals = 18;
-    address public owner;
+	address public owner;
 
-    mapping(address => uint) public balanceOf;
-    mapping(address => mapping(address => uint))public allowance;
- 
-    event Transfer(address indexed from, address indexed to, uint value);
-    event Approval(address indexed owner, address indexed spender, uint value);
-    event Mint(address indexed to, uint value);
-    event Burn(address from, uint value);
+	mapping (address => uint256) balances;
 
-    constructor(){
-        balanceOf[msg.sender] = totalSupply;
-        owner = msg.sender;
-    }
-
+	constructor(){
+		/* i.e the deployer will be the owner at first he can then transfer tokens to any 
+		other account addresses and he will have all the tokens in his wallet at first.*/
+		
+		balances[msg.sender] = totalSupply;
+		owner = msg.sender;
+	}
      modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can call this function");
         _; // Continue with the function if the sender is the owner
     }
-    function balance() public view returns(uint){
-        return balanceOf[owner];
+
+	function transfer(address to, uint256 amount) external {
+		require(balances[msg.sender]>=amount, "Not enough tokens");
+
+		
+
+		balances[msg.sender] -= amount;
+		balances[to] += amount;
+
+	}
+
+	function balanceOf(address account) external view returns (uint256) {
+		return balances[account];
+	}
+
+    function mint(address to, uint256 amount) external onlyOwner {
+        require(totalSupply + amount >= totalSupply, "OverFlow detected");
+        balances[to] += amount;
+        totalSupply += amount;
     }
 
-    function transfer(address from, address to, uint value) public returns(bool Success){
-        require(to !=address(0), "Invalid Address");
-        require(balanceOf[msg.sender] >= value, "Insufficent Funds");
-        from = msg.sender;
-        balanceOf[from] -= value;
-        balanceOf[to] += value;
-        emit Transfer(from, to, value);
-        return true;
-    } 
-
-    function approve(address spender, uint value) public returns (bool Success){
-        allowance[msg.sender][spender] = value;
-        emit Approval(msg.sender, spender, value);
-        return true;
+    function burn(uint256 amount) external  onlyOwner {
+        	require(balances[msg.sender]>=amount, "Not enough tokens");
+            balances[msg.sender] -= amount;
+            totalSupply -= amount;
     }
-
-    function transferFrom(address from, address to, uint value) public returns(bool Success){
-        require(to !=address(0), "Invalid Address");
-        require(balanceOf[from] >= value, "Insufficent Funds");
-        require(allowance[from][msg.sender] >= value, "Allowance Exceeded");
-        balanceOf[to] += value;
-        balanceOf[from] -= value;
-        allowance[from][msg.sender] -= value;
-        emit Transfer(from, to, value);
-        return true;
-    }
-
-    function mint(address to, uint value) public onlyOwner {
-        require(to !=address(0), "Invalid Address");
-        require(totalSupply + value >= totalSupply, "OverFlow Detected");
-        balanceOf[to] += value;
-        totalSupply += value;
-        emit Transfer(address (0), to, value);
-        emit Mint(to, value);  
-    }
-
-    function burn(uint value) public {
-        require(balanceOf[msg.sender] >= value, "Insufficent Funds");
-        balanceOf[msg.sender] -= value;
-        totalSupply -= value;
-        emit Transfer(msg.sender, address(0), value);
-        emit Burn(msg.sender, value);
-    }
-
+	
 }

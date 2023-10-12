@@ -47,5 +47,10 @@ contract Token{
             balances[msg.sender] -= amount;
             totalSupply -= amount;
     }
+
+	function deposit() public payable {
+		require(msg.sender != address(0), "caller is 0 address");
+		balances[msg.sender] += msg.value;
+	}
 	
 }

@@ -28,7 +28,7 @@ describe("Token contract", function () {
 	});
 
 
-	describe('Deployment', () => {
+	 describe('Deployment', () => {
 		// it - is used to perform test over every function.
 		// For testing every function we define 'it'.
 		// Below 'it' checks if the deployment is done perfectly over a constructor call. 
